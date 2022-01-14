@@ -416,7 +416,7 @@ class ZLThumbnailViewController: UIViewController {
             hud.show()
             DispatchQueue.global().async {
                 self.albumList.refetchPhotos()
-                ZLMainAsync {
+                ZLMainAsync(after: 0.5) {
                     self.arrDataSources.removeAll()
                     self.arrDataSources.append(contentsOf: self.albumList.models)
                     markSelected(source: &self.arrDataSources, selected: &nav.arrSelectedModels)
@@ -1189,7 +1189,7 @@ extension ZLThumbnailViewController: PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         guard let changes = changeInstance.changeDetails(for: self.albumList.result)
             else { return }
-        ZLMainAsync(after: 0.5) {
+        ZLMainAsync {
             // 变化后再次显示相册列表需要刷新
             self.hasTakeANewAsset = true
             self.albumList.result = changes.fetchResultAfterChanges
