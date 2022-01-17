@@ -416,13 +416,25 @@ class ZLThumbnailViewController: UIViewController {
             hud.show()
             DispatchQueue.global().async {
                 self.albumList.refetchPhotos()
-                ZLMainAsync(after: 0.5) {
-                    self.arrDataSources.removeAll()
-                    self.arrDataSources.append(contentsOf: self.albumList.models)
-                    markSelected(source: &self.arrDataSources, selected: &nav.arrSelectedModels)
-                    hud.hide()
-                    self.collectionView.reloadData()
-                    self.scrollToBottom()
+                if #available(iOS 14.0, *), PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited {
+                    ZLMainAsync(after: 0.5) {
+                        self.arrDataSources.removeAll()
+                        self.arrDataSources.append(contentsOf: self.albumList.models)
+                        markSelected(source: &self.arrDataSources, selected: &nav.arrSelectedModels)
+                        self.collectionView.reloadData()
+                        self.scrollToBottom()
+                    }
+                }else{
+                    hud.show()
+                    ZLMainAsync {
+                        self.arrDataSources.removeAll()
+                        self.arrDataSources.append(contentsOf: self.albumList.models)
+                        markSelected(source: &self.arrDataSources, selected: &nav.arrSelectedModels)
+                        hud.hide()
+                        self.collectionView.reloadData()
+                        self.scrollToBottom()
+                    }
+
                 }
             }
         } else {
