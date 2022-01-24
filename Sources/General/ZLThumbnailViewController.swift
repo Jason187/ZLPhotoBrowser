@@ -412,9 +412,12 @@ class ZLThumbnailViewController: UIViewController {
     func loadPhotos() {
         let nav = self.navigationController as! ZLImageNavController
         if self.albumList.models.isEmpty {
+            let hud = ZLProgressHUD(style: ZLPhotoConfiguration.default().hudStyle)
+            hud.show()
             DispatchQueue.global().async {
                 self.albumList.refetchPhotos()
                 if #available(iOS 14.0, *), PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited {
+                    hud.hide()
                     ZLMainAsync(after: 0.5) {
                         self.arrDataSources.removeAll()
                         self.arrDataSources.append(contentsOf: self.albumList.models)
@@ -423,8 +426,6 @@ class ZLThumbnailViewController: UIViewController {
                         self.scrollToBottom()
                     }
                 }else{
-                    let hud = ZLProgressHUD(style: ZLPhotoConfiguration.default().hudStyle)
-                    hud.show()
                     ZLMainAsync {
                         self.arrDataSources.removeAll()
                         self.arrDataSources.append(contentsOf: self.albumList.models)
