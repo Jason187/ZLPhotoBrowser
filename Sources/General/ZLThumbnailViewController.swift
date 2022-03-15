@@ -1205,7 +1205,7 @@ extension ZLThumbnailViewController: PHPhotoLibraryChangeObserver {
             // 变化后再次显示相册列表需要刷新
             self.hasTakeANewAsset = true
             self.albumList.result = changes.fetchResultAfterChanges
-            let nav = (self.navigationController as! ZLImageNavController)
+            guard let nav = (self.navigationController as? ZLImageNavController)  else { return }
             if changes.hasIncrementalChanges {
                 for sm in nav.arrSelectedModels {
                     let isDelete = changeInstance.changeDetails(for: sm.asset)?.objectWasDeleted ?? false
